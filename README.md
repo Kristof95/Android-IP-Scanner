@@ -1,7 +1,7 @@
 # Android IP Address Scanner
 
 - User add an ip address in Plain Text
-- The application send a request to http://ip-api.com/json/address
+- The application send a request to http://ip-api.com/json/
 - Parsing JSON
 - Display in ListView
 
