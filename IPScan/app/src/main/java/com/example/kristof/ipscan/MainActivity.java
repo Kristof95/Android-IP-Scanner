@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         ipTextView = (TextView) findViewById(R.id.ipText);
+        new JSONResponse().execute("http://ip-api.com/json/"+ipTextView.getText().toString());
         ipTextView.addTextChangedListener(new TextWatcher()
         {
             @Override
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     public class JSONResponse extends AsyncTask<String, String, String>
     {
         List<String> info;
+        JSONObject parentObject;
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         protected String doInBackground(String... params)
@@ -88,24 +91,25 @@ public class MainActivity extends AppCompatActivity
 
                 info = new ArrayList<>();
 
-                JSONObject parentObject = new JSONObject(finalJson);
-                info.add("AS: "+parentObject.optString("as"));
-                info.add("City: "+parentObject.optString("city"));
-                info.add("Country: "+parentObject.optString("country"));
-                info.add("Country code: "+parentObject.optString("countryCode"));
-                info.add("ISP: "+parentObject.optString("isp"));
-                info.add("Lat: "+parentObject.optString("lat"));
-                info.add("Lon: "+parentObject.optString("lon"));
-                info.add("Org: "+parentObject.optString("org"));
-                info.add("IP address: "+parentObject.optString("query"));
-                info.add("Region: "+parentObject.optString("region"));
-                info.add("Region name: "+parentObject.optString("regionName"));
-                info.add("Zip: "+parentObject.optString("zip"));
-                info.add("Status: "+parentObject.optString("status"));
-                info.add("Timezone: "+parentObject.optString("timezone"));
+                parentObject = new JSONObject(finalJson);
+                info.add(" AS: "+ checkJson(parentObject.optString("as")));
+                info.add(" City: "+ checkJson(parentObject.optString("city")));
+                info.add(" Country: "+ checkJson(parentObject.optString("country")));
+                info.add(" Country code: "+ checkJson(parentObject.optString("countryCode")));
+                info.add(" ISP: "+ checkJson(parentObject.optString("isp")));
+                info.add(" Lat: "+ checkJson(parentObject.optString("lat")));
+                info.add(" Lon: "+ checkJson(parentObject.optString("lon")));
+                info.add(" Org: "+ checkJson(parentObject.optString("org")));
+                info.add(" IP address: "+ checkJson(parentObject.optString("query")));
+                info.add(" Region: "+ checkJson(parentObject.optString("region")));
+                info.add(" Region name: "+ checkJson(parentObject.optString("regionName")));
+                info.add(" Zip: "+ checkJson(parentObject.optString("zip")));
+                info.add(" Status: "+ checkJson(parentObject.optString("status")));
+                info.add(" Timezone: "+ checkJson(parentObject.optString("timezone")));
 
                 return buffer.toString();
             }
+
             catch (Exception k)
             {
                 k.printStackTrace();
@@ -120,23 +124,32 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
 
+        public String checkJson(String text)
+        {
+            if (text.length() != 0)
+            {
+                return text;
+            }
+            return "-";
+        }
+
         @Override
         protected void onPostExecute(String s)
         {
-            runOnUiThread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.listview_row, info);
-                    ListView listView = (ListView)findViewById(R.id.listView);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.listview_row, info);
+            ListView listView = (ListView)findViewById(R.id.listView);
 
-                    if (listView != null && info != null)
-                    {
-                        listView.setAdapter(arrayAdapter);
-                    }
+            if (listView != null)
+            {
+                try
+                {
+                    listView.setAdapter(arrayAdapter);
                 }
-            });
+                catch (NullPointerException h)
+                {
+                    Toast.makeText(getApplicationContext(),"Network problem!.",Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }
