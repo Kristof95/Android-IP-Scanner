@@ -6,5 +6,5 @@
 - Display in ListView
 
 #Some extras
-- The application works with Text Changed Listener so when you add a new address it'll immediately send a request to the API.
+- The application works with Text Changed Listener so when you change something on default address, it'll immediately send a request to the API.
 - If you delete the IP from plain text the default IP address will your address of your device.
