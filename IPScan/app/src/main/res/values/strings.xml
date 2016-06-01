@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">IP Scan</string>
+    <string name="ipText">127.0.0.1</string>
+</resources>
